@@ -34,7 +34,7 @@ def t_scan(L, window = 1e3, num_workers = -1):
     Returns
     -------
     t_stat : numpy array
-        Array which holds t statistic values for each point. The first 
+        Array which holds t statistic values for each point. The first
         and last (window) points are replaced with zero, since the t
         statistic calculation cannot be performed in that case.
 
@@ -43,7 +43,7 @@ def t_scan(L, window = 1e3, num_workers = -1):
     window  = int(window)
     frames  = list(range(window))
     n_cols  = (size // window) - 1
-    
+
     t_stat  = np.zeros((window, n_cols))
 
     if num_workers == 1:
@@ -58,7 +58,7 @@ def t_scan(L, window = 1e3, num_workers = -1):
 
     for index, row in results:
         t_stat[index] = row
-    
+
     t_stat  = np.concatenate((
         np.zeros(window),
         t_stat.transpose().ravel(order='C'),
@@ -123,7 +123,7 @@ def mz_fwt(x, n=2):
     lambda_j = [1.5, 1.12, 1.03, 1.01][0:n]
     if n > 4:
         lambda_j += [1.0]*(n-4)
-    
+
     H = np.array([0.125, 0.375, 0.375, 0.125])
     G = np.array([2.0, -2.0])
     
@@ -168,7 +168,7 @@ def _insert_zeros(x, n):
 def find_steps(array, threshold):
     """
     Finds local maxima by segmenting array based on positions at which
-    the threshold value is crossed. Note that this thresholding is 
+    the threshold value is crossed. Note that this thresholding is
     applied after the absolute value of the array is taken. Thus,
     the distinction between upward and downward steps is lost. However,
     get_step_sizes can be used to determine directionality after the
@@ -206,7 +206,7 @@ def get_step_sizes(array, indices, window=1000):
     by the window parameter) before and after the index of step
     occurrence. The directionality of the step is reflected by the sign
     of the step size (i.e. a positive value indicates an upward step,
-    and a negative value indicates a downward step). The combined 
+    and a negative value indicates a downward step). The combined
     standard deviation of both measurements (as a measure of uncertainty
     in step calculation) is also provided.
 
@@ -215,7 +215,7 @@ def get_step_sizes(array, indices, window=1000):
     array : numpy array
         1 dimensional array that represents time series of data points
     indices : list
-        List of indices of the detected steps (as provided by 
+        List of indices of the detected steps (as provided by
         find_steps, for example)
     window : int, optional
         Number of points to average over to determine baseline levels
@@ -234,7 +234,9 @@ def get_step_sizes(array, indices, window=1000):
     indices    = sorted(indices)
     last       = len(indices) - 1
     for i, index in enumerate(indices):
-        if i == 0:
+        if last == 0:
+            q = window
+        elif i == 0:
             q = min(window, indices[i+1]-index)
         elif i == last:
             q = min(window, index - indices[i-1])
