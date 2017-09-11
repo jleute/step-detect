@@ -5,6 +5,7 @@ thomas.b.kahn@gmail.com
 from __future__ import absolute_import
 from math import sqrt
 import multiprocessing as mp
+from statsmodels import robust
 import numpy as np
 from six.moves import range
 from six.moves import zip
@@ -244,6 +245,6 @@ def get_step_sizes(array, indices, window=1000):
             q = min(window, index-indices[i-1], indices[i+1]-index)
         a = array[index:index+q]
         b = array[index-q:index]
-        step_sizes.append(a.mean() - b.mean())
-        step_error.append(sqrt(a.var()+b.var()))
+        step_sizes.append(np.median(a) - np.median(b))
+        step_error.append(sqrt(pow(robust.mad(a),2)+pow(robust.mad(b),2)))
     return step_sizes, step_error
